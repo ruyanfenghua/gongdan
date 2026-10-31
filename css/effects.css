@@ -1,0 +1,124 @@
+/* effects.css —— 抄来的视觉层
+ * GlareHover  光泽扫过    (react-bits/Animations/GlareHover，改成纯 CSS)
+ * Liquid Glass 磨砂玻璃    (React Bits FluidGlass 的降级实现)
+ * Reveal      滚动揭示    (scroll-craft/taste.md 的 fade-in 参数)
+ */
+
+/* ============ 1. 光泽扫过 ============
+ * 只给客户卡片用。工单列表用指针聚光、主 CTA 用边缘光点，
+ * 一个区域一个效果，三个同时上就是廉价。 */
+.cust::before{
+  content:"";position:absolute;top:-60%;bottom:-60%;width:44%;
+  pointer-events:none;opacity:0;border-radius:inherit;
+  background:linear-gradient(100deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,.04) 28%,
+    rgba(255,255,255,.13) 44%,
+    rgba(255,255,255,.2) 50%,
+    rgba(255,255,255,.13) 56%,
+    rgba(255,255,255,.04) 72%,
+    rgba(255,255,255,0) 100%);
+  transform:translateX(-170%) skewX(-16deg);
+  will-change:transform,opacity;
+}
+.cust:hover::before{animation:glare 1.05s cubic-bezier(.23,1,.32,1) forwards}
+@keyframes glare{
+  0%  {transform:translateX(-170%) skewX(-16deg);opacity:0}
+  14% {opacity:1}
+  78% {opacity:1}
+  100%{transform:translateX(330%) skewX(-16deg);opacity:0}
+}
+html[data-theme="light"] .cust::before{
+  background:linear-gradient(100deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,.4) 34%,
+    rgba(255,255,255,.75) 50%,
+    rgba(255,255,255,.4) 66%,
+    rgba(255,255,255,0) 100%);
+}
+
+/* ============ 2. 磨砂玻璃 ============
+ * 三层叠出玻璃感：
+ *   a. backdrop blur 让背后内容糊掉
+ *   b. 顶部 1px 白高光（真实玻璃的"唇口"）
+ *   c. 底部 1px 暗线（厚度） */
+.glass{
+  position:relative;
+  background:color-mix(in srgb,var(--bg) 70%,transparent);
+  backdrop-filter:blur(22px) saturate(180%);
+  -webkit-backdrop-filter:blur(22px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 -1px 0 rgba(0,0,0,.45);
+}
+html[data-theme="light"] .glass{
+  background:color-mix(in srgb,var(--bg) 74%,transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 -1px 0 rgba(24,20,14,.07);
+}
+
+/* 液态玻璃块：边缘折射靠四边 inset 高光模拟，中间保持通透 */
+.lens{
+  position:relative;
+  border-radius:14px;
+  background:
+    radial-gradient(120% 100% at 50% -30%,rgba(255,255,255,.14),transparent 58%),
+    radial-gradient(100% 80% at 50% 130%,rgba(255,255,255,.06),transparent 62%);
+  backdrop-filter:blur(3px) saturate(170%) brightness(1.06);
+  -webkit-backdrop-filter:blur(3px) saturate(170%) brightness(1.06);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.42),
+    inset 0 -1px 1.5px rgba(255,255,255,.1),
+    inset 1px 0 1px rgba(255,255,255,.16),
+    inset -1px 0 1px rgba(255,255,255,.16),
+    0 10px 34px -12px rgba(0,0,0,.7);
+  border:1px solid rgba(255,255,255,.09);
+}
+html[data-theme="light"] .lens{
+  background:
+    radial-gradient(120% 100% at 50% -30%,rgba(255,255,255,.95),transparent 58%),
+    radial-gradient(100% 80% at 50% 130%,rgba(255,255,255,.5),transparent 62%);
+  border-color:rgba(24,20,14,.07);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,1),
+    inset 0 -1px 1px rgba(24,20,14,.05),
+    0 10px 30px -14px rgba(24,20,14,.25);
+}
+
+/* 抽屉头部吸顶玻璃条：内容从下面滚过去时被糊掉 */
+.d-head-sticky{
+  position:sticky;top:0;z-index:5;
+  margin:-20px -22px 0;padding:20px 22px 14px;
+  background:color-mix(in srgb,var(--s1) 78%,transparent);
+  backdrop-filter:blur(18px) saturate(160%);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 1px 0 var(--line);
+}
+
+/* ============ 3. 滚动揭示 ============ */
+[data-reveal]{will-change:opacity,transform}
+
+/* ============ 4. 焦点环 ============
+ * 全站统一：琥珀描边 + 2px 偏移，不用浏览器默认蓝框 */
+:focus-visible{
+  outline:2px solid rgba(var(--accent),.75);
+  outline-offset:2px;
+  border-radius:6px;
+}
+.btn-new:focus-visible,
+.ticket:focus-visible{outline-offset:1px}
+
+/* ============ 5. 降级 ============ */
+@media (prefers-reduced-motion: reduce){
+  .cust::before{display:none}
+  [data-reveal]{opacity:1 !important;transform:none !important;transition:none !important}
+  *{animation-duration:.01ms !important;animation-iteration-count:1 !important}
+}
+
+/* ============ 6. 主 CTA 容器 ============
+ * canvas 需要溢出到按钮外才能画光晕，所以由 wrap 承载，
+ * 按钮自己保留 overflow:hidden 给 ripple 用。 */
+.cta-wrap{position:relative;display:inline-flex;flex:0 0 auto;isolation:isolate}
+.cta-wrap > canvas{position:absolute;pointer-events:none;z-index:2}
+.cta-wrap .btn-new{position:relative;z-index:1}

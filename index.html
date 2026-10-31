@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeskFlow · 交付工单</title>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@variable&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/effects.css">
+</head>
+<body>
+
+<!-- 背景光斑 -->
+<div class="aurora">
+  <span class="blob b1"></span>
+  <span class="blob b2"></span>
+  <span class="blob b3"></span>
+</div>
+<div class="grain"></div>
+
+<!-- 侧栏 -->
+<aside class="rail" id="rail">
+  <div class="rail-top">
+    <div class="brand" data-tip="DeskFlow">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 7h16M4 12h10M4 17h7"/>
+        </svg>
+      </div>
+      <span class="brand-name">DeskFlow</span>
+    </div>
+  </div>
+
+  <nav class="rail-nav">
+    <button class="nav-item active" data-view="inbox" data-tip="工单">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.4 5.4 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.4-6.6A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.8 1.4Z"/></svg>
+      <span class="nav-label">工单</span>
+      <span class="nav-badge" id="badge-inbox">12</span>
+    </button>
+    <button class="nav-item" data-view="board" data-tip="看板">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="18" rx="1.5"/><rect x="14" y="3" width="7" height="11" rx="1.5"/></svg>
+      <span class="nav-label">看板</span>
+    </button>
+    <button class="nav-item" data-view="insight" data-tip="数据">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
+      <span class="nav-label">数据</span>
+    </button>
+    <button class="nav-item" data-view="customers" data-tip="客户">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+      <span class="nav-label">客户</span>
+    </button>
+  </nav>
+
+  <div class="rail-foot">
+    <button class="rail-toggle" id="railToggle" data-tip="收起">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="me" data-tip="方哲">
+      <div class="me-avatar">方</div>
+    </div>
+    <p class="rail-note">演示数据</p>
+  </div>
+</aside>
+
+<!-- 主区 -->
+<main class="main" id="main">
+
+  <header class="topbar">
+    <div class="crumbs" id="crumbs">
+      <span class="crumb-root">交付中心</span>
+      <span class="crumb-sep">/</span>
+      <span class="crumb-now">工单</span>
+    </div>
+
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="searchInput" type="text" placeholder="搜索工单号、客户、问题…" autocomplete="off">
+      <kbd>⌘K</kbd>
+    </div>
+
+    <div class="top-actions">
+      <button class="icon-btn" id="soundToggle" data-tip="音效开">
+        <svg class="ico-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+        <svg class="ico-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="m17 9 5 6M22 9l-5 6"/></svg>
+      </button>
+      <button class="icon-btn" id="themeToggle" data-tip="切换主题">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+      <span class="cta-wrap" id="ctaWrap"><button class="btn-new" id="newTicket">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        新建工单
+      </button></span>
+    </div>
+  </header>
+
+  <div class="viewport" id="viewport">
+
+    <!-- 工单列表 -->
+    <section class="view active" id="view-inbox">
+      <div class="view-head">
+        <div>
+          <h1>工单</h1>
+          <p class="sub"><span>待响应 <b class="num" data-count="3">0</b></span><i></i><span>今日新增 <b class="num" data-count="7">0</b></span><i></i><span>平均首响 <b>23</b> 分</span></p>
+        </div>
+        <div class="seg" id="filterSeg">
+          <button class="seg-btn active" data-filter="all">全部</button>
+          <button class="seg-btn" data-filter="urgent">紧急</button>
+          <button class="seg-btn" data-filter="mine">我的</button>
+          <span class="seg-glider"></span>
+        </div>
+      </div>
+
+      <div class="list" id="ticketList"><!-- JS 渲染 --></div>
+      <div class="empty" id="listEmpty" hidden>没有匹配的工单</div>
+    </section>
+
+    <!-- 看板 -->
+    <section class="view" id="view-board">
+      <div class="view-head">
+        <div>
+          <h1>看板</h1>
+          <p class="sub">拖动卡片可改变状态</p>
+        </div>
+      </div>
+      <div class="board" id="board"><!-- JS 渲染 --></div>
+    </section>
+
+    <!-- 数据 -->
+    <section class="view" id="view-insight">
+      <div class="view-head">
+        <div>
+          <h1>数据</h1>
+          <p class="sub">近 7 天交付情况</p>
+        </div>
+      </div>
+      <div class="kpis" id="kpis"><!-- JS 渲染 --></div>
+      <div class="charts">
+        <div class="card chart-card">
+          <div class="card-head"><h3>每日工单量</h3><span class="tag">近 7 天</span></div>
+          <svg id="chartBar" class="chart" viewBox="0 0 560 220" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="card chart-card">
+          <div class="card-head"><h3>问题类型</h3><span class="tag">本月</span></div>
+          <div class="donut-wrap">
+            <svg id="chartDonut" viewBox="0 0 200 200"></svg>
+            <ul class="legend" id="donutLegend"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="charts2">
+        <div class="card">
+          <div class="card-head"><h3>处理人负载</h3><span class="tag">当前未闭环</span></div>
+          <ul class="load" id="loadList"></ul>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>首次响应时长</h3><span class="tag">近 7 天 · 分钟</span></div>
+          <svg id="chartLine" class="chart" viewBox="0 0 520 200" preserveAspectRatio="none"></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 客户 -->
+    <section class="view" id="view-customers">
+      <div class="view-head">
+        <div>
+          <h1>客户</h1>
+          <p class="sub">在服务的 6 家</p>
+        </div>
+      </div>
+      <div class="cust-grid" id="custGrid"><!-- JS 渲染 --></div>
+    </section>
+
+  </div>
+</main>
+
+<!-- 详情抽屉 -->
+<div class="drawer-mask" id="drawerMask"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-inner" id="drawerInner"><!-- JS 渲染 --></div>
+</aside>
+
+<!-- 新建工单弹层 -->
+<div class="modal-mask" id="modalMask">
+  <div class="modal" id="modal">
+    <div class="modal-head">
+      <h3>新建工单</h3>
+      <button class="icon-btn sm" id="modalClose">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <label class="field"><span>客户</span>
+        <select id="fCustomer"></select>
+      </label>
+      <label class="field"><span>问题标题</span>
+        <input id="fTitle" type="text" placeholder="例：收银端登录提示网络异常">
+        <div id="similarHint" class="similar-hint" hidden></div>
+      </label>
+      <div class="field-row">
+        <label class="field"><span>优先级</span>
+          <select id="fPriority">
+            <option value="紧急">紧急</option>
+            <option value="高">高</option>
+            <option value="中" selected>中</option>
+            <option value="低">低</option>
+          </select>
+        </label>
+        <label class="field"><span>类型</span>
+          <select id="fType">
+            <option>系统故障</option>
+            <option>数据问题</option>
+            <option>使用咨询</option>
+            <option>需求变更</option>
+          </select>
+        </label>
+      </div>
+      <label class="field"><span>问题描述</span>
+        <textarea id="fDesc" rows="3" placeholder="客户描述的现象、发生时间、影响范围"></textarea>
+      </label>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-ghost" id="modalCancel">取消</button>
+      <button class="btn-primary" id="modalSubmit">创建工单</button>
+    </div>
+  </div>
+</div>
+
+<!-- 提示 -->
+<div class="toasts" id="toasts"></div>
+
+<script src="js/data.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/effects.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
